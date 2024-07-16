@@ -5,7 +5,7 @@ const { MongoClient, ServerApiVersion } = require('mongodb');
 const port = process.env.PORT || 3000;
 const jwt = require('jsonwebtoken');
 require('dotenv').config()
-
+const bcrypt = require('bcrypt');
 app.use(express.json());
 app.use(cors())
 
@@ -31,6 +31,8 @@ async function run() {
         if (filter) {
           return res.status(401).send({ message: 'User already registered' });
         }
+        const hashedPassword = await bcrypt.hash(query.password, 5)
+        query.password = hashedPassword
         const result = await registerCollection.insertOne(query);
         res.send(result);
       });
