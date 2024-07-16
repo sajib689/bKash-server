@@ -36,6 +36,22 @@ async function run() {
         const result = await registerCollection.insertOne(query);
         res.send(result);
       });
+      app.post('/login', async (req, res) => {
+        const { number, password } = req.body;
+        const user = await registerCollection.findOne({ number: number });
+        if (!user) {
+          return res.status(401).send({ message: 'User not found' });
+        }
+  
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
+          return res.status(401).send({ message: 'Invalid password' });
+        }
+  
+       
+  
+        res.send({ message: 'Login successful' });
+      });
   } finally {
    
   }
